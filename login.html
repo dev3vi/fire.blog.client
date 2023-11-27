@@ -101,7 +101,7 @@
                 Don't have an account? <a href="register.html">Register now</a>
               </br>
               </form>
-              <button onclick="handlerLogin()">
+              <button id="handlerLogin">
                 Login
               </button>
             </div>
@@ -163,19 +163,6 @@
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
-  function handlerLogin() {
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
-    axios.post("http://127.0.0.1:8090/api/authenticate", {
-      username: username,
-      password: password
-    })
-    .then((response) => {
-      debugger
-      console.log(response);
-    });
-  }
-</script>
+<script src="js/login.js" type="module"></script>
 
 </html>
