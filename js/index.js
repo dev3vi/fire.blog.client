@@ -1,18 +1,25 @@
 import { API_URL } from './config.js';
+
 async function saveLog() {
-    let currentdate = new Date();
-    let datetime = currentdate.getDate() + "/"
-        + (currentdate.getMonth() + 1) + "/"
-        + currentdate.getFullYear() + " "
-        + currentdate.getHours() + ":"
-        + currentdate.getMinutes() + ":"
-        + currentdate.getSeconds();
+    var currentTimeMillis = Date.now();
+    var currentDate = new Date(currentTimeMillis);
+    var year = currentDate.getFullYear();
+    var month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    var day = String(currentDate.getDate()).padStart(2, '0');
+    var hours = String(currentDate.getHours()).padStart(2, '0');
+    var minutes = String(currentDate.getMinutes()).padStart(2, '0');
+    var seconds = String(currentDate.getSeconds()).padStart(2, '0');
+    var formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+    
     let ip = await getIP();
-    axios.post(API_URL + "/api/log-info", {
-        time: datetime,
-        ip: ip,
-        infoDevice: detectBrowser()
-    }).then(() => {});
+    setTimeout(function() {
+        axios.post(API_URL + "/api/log-info", {
+            time: formattedTime,
+            ip: ip,
+            infoDevice: detectBrowser()
+        }).then(() => {});
+      }, 2000);
 }
 
 async function getIP() {
