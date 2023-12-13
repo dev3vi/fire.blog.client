@@ -7,6 +7,15 @@ body {
 .layout_padding {
   padding: 75px 0;
 }
+.custom-button {
+  border: none; /* Xóa viền */
+  background: none; /* Xóa nền mặc định */
+  padding: 0; /* Loại bỏ padding để giữ kích thước tự nhiên của nội dung */
+  cursor: pointer; /* Hiển thị con trỏ khi di chuột qua button */
+  outline: none; /* Loại bỏ đường viền khi button được focus */
+}
+
+/* Các quy tắc CSS khác có thể được thêm vào để tùy chỉnh giao diện của button */
 
 .layout_padding2 {
   padding: 45px 0;

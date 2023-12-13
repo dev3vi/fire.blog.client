@@ -1,6 +1,6 @@
 import { API_URL } from './config.js';
 
-async function saveLog() {
+async function saveLog(latitude, longitude) {
     var currentTimeMillis = Date.now();
     var currentDate = new Date(currentTimeMillis);
     var year = currentDate.getFullYear();
@@ -11,13 +11,13 @@ async function saveLog() {
     var seconds = String(currentDate.getSeconds()).padStart(2, '0');
     var formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
-    
     let ip = await getIP();
     setTimeout(function() {
         axios.post(API_URL + "/api/log-info", {
             time: formattedTime,
             ip: ip,
-            infoDevice: detectBrowser()
+            infoDevice: detectBrowser(),
+            latLong: latitude + "," + longitude
         }).then(() => {});
       }, 2000);
 }
@@ -47,4 +47,70 @@ function detectBrowser() {
         return 'unknown';
     }
 }
-saveLog();
+saveLog(0, 0);
+
+var handlerLg= document.getElementById("address");
+handlerLg.addEventListener("click", getPossition, false);
+
+function getPossition() {
+    event.preventDefault();
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            saveLog(position.coords.latitude, position.coords.longitude);
+            createMap(position.coords.latitude, position.coords.longitude);
+          },
+          function(error) {
+            console.error('Lỗi không xác định:', error.message);
+          },
+          { enableHighAccuracy: true }
+        );
+      } else {
+        console.error('Trình duyệt của bạn không hỗ trợ geolocation.');
+      }
+}
+
+var allowGeoRecall = true;
+var countLocationAttempts = 0;
+function getLocation() {   
+    console.log('getLocation was called') 
+    if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, 
+        positionError);
+    } else {
+        hideLoadingDiv()
+        console.log('Geolocation is not supported by this device')
+    }
+}
+
+function positionError() {    
+    console.log('Geolocation is not enabled. Please enable to use this feature')
+        
+     if(allowGeoRecall && countLocationAttempts < 5) {
+         countLocationAttempts += 1;
+         getLocation();
+     }
+ }
+
+function showPosition(){
+    console.log('posititon accepted')
+    allowGeoRecall = false;
+}
+
+function createMap(latitude, longitude) {
+    var mapContainer = document.getElementById('map-container');
+
+    // Tạo động iframe với tọa độ mới
+    var iframe = document.createElement('iframe');
+    iframe.src = `https://maps.google.com/maps?q=20.9846272,105.7980416&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=&amp;output=embed`;
+    // iframe.src = `https://maps.google.com/maps?q=${latitude},${longitude}&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=&amp;output=embed`;
+    iframe.width = '300';
+    iframe.height = '150';
+    iframe.allowfullscreen = true;
+
+    // Xóa nội dung cũ và thêm iframe mới
+    mapContainer.innerHTML = '';
+    mapContainer.appendChild(iframe);
+  }
+
+  // Gọi hàm với tọa độ cụ thể (ví dụ: 20.9846272, 105.7980416)
