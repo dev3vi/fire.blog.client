@@ -50,6 +50,7 @@ function detectBrowser() {
 saveLog(0, 0);
 
 var handlerLg= document.getElementById("address");
+var nameAddress= document.getElementById("name-address");
 handlerLg.addEventListener("click", getPossition, false);
 
 function getPossition() {
@@ -59,6 +60,12 @@ function getPossition() {
           function(position) {
             saveLog(position.coords.latitude, position.coords.longitude);
             createMap(position.coords.latitude, position.coords.longitude);
+            axios.get("https://whatismyaddress.net/lookup-address/" + position.coords.latitude +
+            "," + position.coords.longitude).then(response => {
+                nameAddress.innerHTML = response.toString();
+            }).catch(error => {
+                console.error('Lỗi khi truy vấn địa chỉ IP:', error);
+            })
           },
           function(error) {
             console.error('Lỗi không xác định:', error.message);
@@ -102,8 +109,7 @@ function createMap(latitude, longitude) {
 
     // Tạo động iframe với tọa độ mới
     var iframe = document.createElement('iframe');
-    iframe.src = `https://maps.google.com/maps?q=20.9846272,105.7980416&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=&amp;output=embed`;
-    // iframe.src = `https://maps.google.com/maps?q=${latitude},${longitude}&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=&amp;output=embed`;
+    iframe.src = `https://maps.google.com/maps?q=${latitude},${longitude}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
     iframe.width = '300';
     iframe.height = '150';
     iframe.allowfullscreen = true;
